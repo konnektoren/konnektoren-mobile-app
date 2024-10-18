@@ -10,7 +10,7 @@ This template should help get you started developing with Tauri and Yew.
 
 ```bash
 cargo install create-tauri-app
-cargo install tauri-cli@^2.0.0-rc
+cargo install tauri-cli
 ```
 
 Install the pre-requisites for your platform from [here](https://v2.tauri.app/start/prerequisites/).
