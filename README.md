@@ -42,3 +42,11 @@ cargo tauri android build
 ```bash
 cargo tauri android dev
 ```
+
+## Building and Running for iOS
+
+```bash
+cargo tauri ios init
+cargo tauri ios build
+cargo tauri ios dev
+```

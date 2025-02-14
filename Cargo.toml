@@ -17,7 +17,7 @@ console_error_panic_hook = "0.1.7"
 log = "0.4"
 yew = { version = "0.21", features = ["csr"] }
 konnektoren-core = { git = "https://github.com/konnektoren/konnektoren-rs.git", default-features = false }
-konnektoren-yew = { git = "https://github.com/konnektoren/konnektoren-rs.git", default-features = false, features = [
+konnektoren-yew = { git = "https://github.com/konnektoren/konnektoren-yew.git", default-features = false, features = [
     "storage",
     "effects",
     "music",
