@@ -1,4 +1,4 @@
-@import "../../styles/vendors/index.css";
+@import "../../styles/index.css";
 
 .download-page {
     @apply min-h-screen bg-base-200 flex flex-col;
