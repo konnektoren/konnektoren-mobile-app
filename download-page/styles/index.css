@@ -1,0 +1,61 @@
+@import "../../styles/vendors/index.css";
+
+.download-page {
+    @apply min-h-screen bg-base-200 flex flex-col;
+}
+
+.download-page__container {
+    @apply container mx-auto px-4 py-8 flex-grow;
+}
+
+.download-page__header {
+    @apply text-center mb-10;
+}
+
+.download-page__title {
+    @apply text-3xl font-bold text-primary mb-2;
+}
+
+.download-page__subtitle {
+    @apply text-lg text-base-content/80;
+}
+
+.download-page__logo {
+    @apply w-32 h-32 mx-auto my-6;
+}
+
+.download-page__card {
+    @apply card bg-base-100 shadow-xl mb-8;
+}
+
+.download-page__card-body {
+    @apply card-body;
+}
+
+.download-page__card-title {
+    @apply card-title text-2xl mb-4 pb-2 border-b border-base-300;
+}
+
+.download-page__links {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4 mt-4;
+}
+
+.download-page__link {
+    @apply btn btn-outline flex items-center justify-start gap-3 normal-case h-auto py-3;
+}
+
+.download-page__link:hover {
+    @apply transform -translate-y-1 transition-transform duration-200;
+}
+
+.download-page__link-icon {
+    @apply text-xl;
+}
+
+.download-page__github-link {
+    @apply btn btn-ghost btn-block normal-case;
+}
+
+.download-page__footer {
+    @apply text-center mt-8 py-6 text-base-content/70 text-sm;
+}

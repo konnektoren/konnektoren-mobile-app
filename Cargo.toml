@@ -25,4 +25,4 @@ konnektoren-yew = { git = "https://github.com/konnektoren/konnektoren-yew.git", 
 ] }
 
 [workspace]
-members = ["src-tauri"]
+members = [ "download-page","src-tauri"]

@@ -1,0 +1,9 @@
+[build]
+target = "./index.html"
+
+[serve]
+port = 1420
+open = false
+
+[tools]
+tailwindcss = "2.1.9"
