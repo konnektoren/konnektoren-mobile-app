@@ -28,6 +28,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install just
+        uses: extractions/setup-just@v1
+        with:
+          just-version: "1.14"
+
       - name: setup node
         uses: actions/setup-node@v4
         with:
@@ -38,10 +43,6 @@ jobs:
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
-
-      - uses: cargo-bins/cargo-binstall@main
-      - name: Install Trunk
-        run: cargo binstall trunk
 
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
@@ -54,9 +55,14 @@ jobs:
       - name: install tauri-cli
         run: cargo install tauri-cli
 
-      - name: install trunk
-        run: cargo install trunk
       - run: rustup target add wasm32-unknown-unknown
+
+      - uses: cargo-bins/cargo-binstall@main
+      - name: Install Trunk
+        run: cargo binstall trunk
+
+      - name: Setup Dependencies
+        run: just setup-styles
 
       - uses: tauri-apps/tauri-action@v0
         env:
