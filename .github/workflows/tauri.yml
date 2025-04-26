@@ -1,11 +1,17 @@
-name: "publish"
+name: "Build and Publish App"
 
 on:
   push:
     branches:
       - release
+  workflow_dispatch:
+    inputs:
+      build_download_page:
+        description: "Build download page after app"
+        type: boolean
+        default: true
 
-# This workflow will trigger on each push to the `release` branch to create or update a GitHub release, build your app, and upload the artifacts to the release.
+# This workflow builds the app for all platforms and creates a GitHub release
 
 jobs:
   publish-tauri:
@@ -15,16 +21,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # for Arm based macs (M1 and above).
+          - platform: "macos-latest" # for Arm based macs (M1 and above)
             args: "--target aarch64-apple-darwin"
-          - platform: "macos-latest" # for Intel based macs.
+          - platform: "macos-latest" # for Intel based macs
             args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
+          - platform: "ubuntu-22.04" # for Linux
             args: ""
-          - platform: "windows-latest"
+          - platform: "windows-latest" # for Windows
             args: ""
 
     runs-on: ${{ matrix.platform }}
+
+    outputs:
+      app_version: ${{ steps.get_app_version.outputs.version }}
+      release_tag: ${{ steps.get_app_version.outputs.tag }}
+      release_created: ${{ steps.tauri_build.outputs.releaseCreated }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -33,45 +45,70 @@ jobs:
         with:
           just-version: "1.14"
 
-      - name: setup node
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
 
-      - name: install Rust stable
+      - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
+      - name: Install dependencies (Ubuntu only)
+        if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-        # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
-        # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
-      - name: install tauri-cli
+      - name: Install Tauri CLI
         run: cargo install tauri-cli
 
-      - run: rustup target add wasm32-unknown-unknown
+      - name: Add wasm target
+        run: rustup target add wasm32-unknown-unknown
 
       - uses: cargo-bins/cargo-binstall@main
+
       - name: Install Trunk
-        run: cargo binstall trunk
+        run: cargo binstall trunk -y
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
 
       - name: Setup Dependencies
         run: just setup-styles
 
-      - uses: tauri-apps/tauri-action@v0
+      # Extract app version for later use
+      - name: Get app version
+        id: get_app_version
+        shell: bash
+        run: |
+          # Extract version from Cargo.toml
+          VERSION=$(grep '^version' src-tauri/Cargo.toml | head -1 | cut -d '"' -f 2)
+          echo "Version: $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=konnektoren-mobile-app-v$VERSION" >> $GITHUB_OUTPUT
+
+      # Build the app with Tauri
+      - name: Build with Tauri
+        id: tauri_build
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tauriScript: cargo tauri
-          tagName: konnektoren-mobile-app-v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          tagName: konnektoren-mobile-app-v__VERSION__
           releaseName: "App v__VERSION__"
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
+
+      # Trigger the download page workflow only from one of the matrix jobs
+      - name: Trigger download page workflow
+        if: ${{ matrix.platform == 'ubuntu-22.04' && (github.event_name != 'workflow_dispatch' || inputs.build_download_page) }}
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: release-published
+          client-payload: '{"release_tag": "${{ steps.get_app_version.outputs.tag }}", "app_version": "${{ steps.get_app_version.outputs.version }}"}'

@@ -1,9 +1,14 @@
 name: Deploy Download Page
 
 on:
-  push:
-    branches: [main]
+  repository_dispatch:
+    types: [release-published]
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag to use (e.g., konnektoren-mobile-app-v0.1.0)"
+        required: true
+        default: "latest"
 
 jobs:
   build_and_deploy:
@@ -12,6 +17,7 @@ jobs:
     env:
       BUILD_DIR: ./dist
       GITHUB_REPO: https://github.com/${{ github.repository }}/releases
+      RELEASE_TAG: ${{ github.event.client_payload.release_tag || inputs.release_tag }}
 
     steps:
       - uses: actions/checkout@v3
@@ -25,17 +31,39 @@ jobs:
         with:
           toolchain: stable
           target: wasm32-unknown-unknown
+          profile: minimal
           override: true
 
       - uses: cargo-bins/cargo-binstall@main
+
       - name: Install Trunk
-        run: cargo binstall trunk
+        run: cargo binstall trunk -y
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
 
       - name: Setup Dependencies
         run: just setup-styles
+
+      - name: Wait for release assets
+        if: ${{ github.event.client_payload.release_tag != '' }}
+        run: |
+          echo "Waiting for release assets to be available..."
+          # Wait up to 5 minutes for assets to be ready
+          for i in {1..60}; do
+            ASSETS_COUNT=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.RELEASE_TAG }} | jq '.assets | length')
+            if [ "$ASSETS_COUNT" -gt 0 ]; then
+              echo "Found $ASSETS_COUNT assets, proceeding with build"
+              break
+            fi
+            echo "Waiting for assets to be uploaded (attempt $i/60)..."
+            sleep 5
+          done
 
       - name: Build Download Page
         run: |
