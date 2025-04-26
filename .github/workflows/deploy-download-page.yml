@@ -1,0 +1,62 @@
+name: Deploy Download Page
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy Download Page
+    runs-on: ubuntu-latest
+    env:
+      BUILD_DIR: ./dist
+      GITHUB_REPO: https://github.com/${{ github.repository }}/releases
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install just
+        uses: extractions/setup-just@v1
+        with:
+          just-version: "1.14"
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: wasm32-unknown-unknown
+          override: true
+
+      - uses: cargo-bins/cargo-binstall@main
+      - name: Install Trunk
+        run: cargo binstall trunk
+
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup Dependencies
+        run: just setup-styles
+
+      - name: Build Download Page
+        run: |
+          cd download-page
+          GITHUB_REPO="${GITHUB_REPO}" trunk build --release
+          mkdir -p ../$BUILD_DIR
+          cp -r dist/* ../$BUILD_DIR/
+
+      - name: Setup CNAME
+        run: |
+          echo "${{ vars.DOWNLOAD_DOMAIN || 'download.konnektoren.app' }}" > $BUILD_DIR/CNAME
+
+      - name: Setup custom 404 page
+        run: |
+          # Copy index.html to 404.html to handle client-side routing
+          cp $BUILD_DIR/index.html $BUILD_DIR/404.html
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ${{ env.BUILD_DIR }}
+          force_orphan: true
