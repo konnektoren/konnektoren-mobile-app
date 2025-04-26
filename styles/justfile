@@ -1,0 +1,61 @@
+# Vendor paths
+vendor_dir := "vendors"
+konnektoren_dir := "../temp/konnektoren"
+konnektoren_repo := "https://github.com/konnektoren/konnektoren-yew.git"
+
+# Default recipe to display help information
+default:
+    @just --list
+
+# Setup vendors directory
+setup-vendors: clone-konnektoren integrate-konnektoren
+
+# Clone Konnektoren repository
+clone-konnektoren:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -d "{{konnektoren_dir}}" ]; then
+        git clone {{konnektoren_repo}} {{konnektoren_dir}}
+
+    else
+        echo "Konnektoren already cloned"
+    fi
+
+integrate-konnektoren:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Create vendors directory if it doesn't exist
+    mkdir -p {{vendor_dir}}/konnektoren_css
+
+    # Copy Konnektoren SCSS files
+    cp -r {{konnektoren_dir}}/styles/* {{vendor_dir}}/konnektoren_css/
+
+    # Update _index.scss to include konnektoren if not already included
+    if ! grep -q "@import 'konnektoren';" {{vendor_dir}}/index.css; then
+        echo "@import './konnektoren_css/index.css';" >> {{vendor_dir}}/index.css
+    fi
+
+    echo "Konnektoren integration complete"
+
+# Clean vendor dependencies
+clean-vendors:
+    rm -rf {{konnektoren_dir}}
+    rm -rf {{vendor_dir}}/konnektoren
+
+# Update vendor dependencies
+update-vendors: clean-vendors setup-vendors
+
+# Check vendor status
+vendor-status:
+    @echo "Checking vendor status..."
+    @if [ -d "{{konnektoren_dir}}" ]; then \
+        echo "Konnektoren: Installed"; \
+    else \
+        echo "Konnektoren: Not installed"; \
+    fi
+    @if [ -d "{{vendor_dir}}/konnektoren" ]; then \
+        echo "Konnektoren integration: Complete"; \
+    else \
+        echo "Konnektoren integration: Incomplete"; \
+    fi

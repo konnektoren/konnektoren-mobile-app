@@ -1,6 +1,15 @@
+# justfile
+
+# Import styles justfile
+styles := "styles"
+
 # List available commands
 default:
     @just --list
+
+# Setup styles
+setup-styles:
+    cd {{styles}} && just setup-vendors
 
 # Initialize Android setup
 android-init:
@@ -39,6 +48,17 @@ clean:
     cargo clean
     rm -rf dist
     rm -rf target
+
+# Update all dependencies
+update: update-rust update-styles
+
+# Update Rust dependencies
+update-rust:
+    cargo update
+
+# Update style dependencies
+update-styles:
+    cd {{styles}} && just update-vendors
 
 # Format code
 format:

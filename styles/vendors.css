@@ -1,0 +1,21 @@
+/* Cookie Consent */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.0/cookieconsent.min.css");
+.cc-window {
+    transform: scale(0.7);
+    transform-origin: top left;
+}
+
+/* Font Awesome */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/fontawesome.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/solid.min.css");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/brands.min.css");
+
+/* Google Fonts */
+@import url("https://fonts.googleapis.com/css?family=Varela+Round&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,700&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono:ital,400,700&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Tangerine&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&display=swap");
+
+/* Intro.js */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.css");
