@@ -1,10 +1,11 @@
 use crate::components::release_links::ReleaseLinks;
-use crate::github_repo_url;
+use crate::{app_version, github_repo_url};
 use yew::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
     let github_repo = github_repo_url();
+    let version = app_version();
 
     html! {
         <div class="download-page">
@@ -13,7 +14,7 @@ pub fn app() -> Html {
                     <h1 class="download-page__title">{"Konnektoren Mobile App"}</h1>
                     <img src="/assets/favicon.png" alt="Konnektoren Logo" class="download-page__logo" />
                     <p class="download-page__subtitle">
-                        {"Download the latest version of Konnektoren Mobile App for your preferred platform."}
+                        {format!("Download version {} for your preferred platform", version)}
                     </p>
                 </div>
 
@@ -29,7 +30,7 @@ pub fn app() -> Html {
 
                 <footer class="download-page__footer">
                     <p>{"© 2024-2025 Konnektoren Mobile App. All rights reserved."}</p>
-                    <p>{"Built with Rust, Tauri, and Yew"}</p>
+                    <p>{format!("Version {} • Built with Rust, Tauri, and Yew", version)}</p>
                 </footer>
             </div>
         </div>

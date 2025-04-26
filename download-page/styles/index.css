@@ -59,3 +59,60 @@
 .download-page__footer {
     @apply text-center mt-8 py-6 text-base-content/70 text-sm;
 }
+
+.download-page__release-container {
+    @apply w-full;
+}
+
+.download-page__link {
+    @apply btn btn-outline flex items-center justify-start gap-3 normal-case h-auto py-3 w-full;
+}
+
+.download-page__link:hover {
+    @apply transform -translate-y-1 transition-transform duration-200;
+}
+
+.download-page__link--active {
+    @apply btn-primary text-primary-content;
+}
+
+.download-page__release-details {
+    @apply mt-2 mb-6 bg-base-200 p-4 rounded-lg;
+}
+
+.download-page__release-description {
+    @apply text-sm mb-4;
+}
+
+.download-page__release-meta {
+    @apply flex justify-between items-center flex-wrap gap-4;
+}
+
+.download-page__release-size {
+    @apply text-sm opacity-75;
+}
+
+.download-page__download-button {
+    @apply btn btn-sm btn-primary;
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .download-page__links {
+        @apply grid grid-cols-2 gap-4;
+    }
+}
+
+@media (max-width: 767px) {
+    .download-page__links {
+        @apply flex flex-col gap-4;
+    }
+
+    .download-page__release-meta {
+        @apply flex-col items-start gap-2;
+    }
+
+    .download-page__download-button {
+        @apply w-full;
+    }
+}

@@ -9,7 +9,7 @@ edition = "2021"
 log = "0.4"
 getrandom = { version = "0.3", features = ["wasm_js"] }
 gloo = "0.3"
-yew = { version = "0.21", features = ["csr"] }
+yew = { workspace = true }
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 web-sys = { version = "0.3", features = ["HtmlAudioElement"] }
@@ -32,3 +32,6 @@ members = ["download-page", "src-tauri"]
 [workspace.package]
 version = "0.1.1"
 description = "Mobile App for Konnektoren"
+
+[workspace.dependencies]
+yew = { version = "0.21", features = ["csr"] }
