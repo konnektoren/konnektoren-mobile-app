@@ -81,6 +81,21 @@ jobs:
           # Copy index.html to 404.html to handle client-side routing
           cp $BUILD_DIR/index.html $BUILD_DIR/404.html
 
+      - name: Download release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p $BUILD_DIR/assets
+          release_id=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.RELEASE_TAG }} | jq .id)
+          assets=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/$release_id/assets | jq -r '.[].name')
+          for asset in $assets; do
+            url="https://api.github.com/repos/${{ github.repository }}/releases/assets/$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/${{ github.repository }}/releases/$release_id/assets | jq -r ".[] | select(.name==\"$asset\") | .id")"
+            echo "Downloading $asset..."
+            curl -L -H "Authorization: token $GH_TOKEN" -H "Accept: application/octet-stream" "$url" -o "$BUILD_DIR/assets/$asset"
+          done
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
