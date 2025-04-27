@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           # Extract version from Cargo.toml
-          VERSION=$(grep '^version' src-tauri/Cargo.toml | head -1 | cut -d '"' -f 2)
+          VERSION=$(grep '^version' Cargo.toml | head -1 | cut -d '"' -f 2)
           echo "Version: $VERSION"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "tag=konnektoren-mobile-app-v$VERSION" >> $GITHUB_OUTPUT
