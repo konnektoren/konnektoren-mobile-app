@@ -30,7 +30,7 @@ resolver = "2"
 members = ["download-page", "src-tauri"]
 
 [workspace.package]
-version = "0.1.4"
+version = "0.1.6"
 description = "Mobile App for Konnektoren"
 
 [workspace.dependencies]

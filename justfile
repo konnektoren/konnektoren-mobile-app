@@ -54,6 +54,7 @@ android-create-keystore:
     #!/usr/bin/env bash
     if [ -f "{{keystore_path}}" ]; then
         echo "Keystore already exists at {{keystore_path}}"
+        echo "If you want to create a new one, delete the existing file first."
         exit 1
     fi
 
@@ -63,13 +64,36 @@ android-create-keystore:
         exit 1
     fi
 
-    keytool -genkey -v -keystore {{keystore_path}} \
+    # Create app signing key
+    keytool -genkeypair -v \
+        -keystore {{keystore_path}} \
         -keyalg RSA -keysize 2048 -validity 10000 \
         -alias {{key_alias}} \
         -storepass {{keystore_pass}} -keypass {{key_pass}} \
-        -dname "CN=Konnektoren Mobile App, OU=Development, O=Konnektoren, L=Unknown, S=Unknown, C=US"
+        -dname "CN=Konnektoren Mobile App, OU=Development, O=konnektoren.help, L=Unknown, S=Unknown, C=DE"
+
+    # Create upload key for Play Store
+    keytool -genkeypair -v \
+        -keystore {{keystore_path}} \
+        -keyalg RSA -keysize 2048 -validity 10000 \
+        -alias upload \
+        -storepass {{keystore_pass}} -keypass {{key_pass}} \
+        -dname "CN=Konnektoren Upload Key, OU=Development, O=konnektoren.help, L=Unknown, S=Unknown, C=DE"
+
+    # Generate upload certificate for Play Store
+    keytool -export -rfc \
+        -keystore {{keystore_path}} \
+        -alias upload \
+        -storepass {{keystore_pass}} \
+        -file upload_certificate.pem
 
     echo "Keystore created successfully at {{keystore_path}}"
+    echo "Upload certificate created at upload_certificate.pem"
+    echo ""
+    echo "For the Google Play Console:"
+    echo "1. Use upload_certificate.pem when setting up app signing"
+    echo "2. Use the 'upload' alias when signing AAB files for upload"
+    echo "3. Keep your keystore secure - losing it means you can't update your app!"
 
 # Sign an Android APK
 android-sign-apk:
@@ -133,7 +157,7 @@ android-sign-aab:
     # Sign the AAB
     jarsigner -sigalg SHA256withRSA -digestalg SHA-256 \
         -keystore {{keystore_path}} -storepass {{keystore_pass}} \
-        -keypass {{key_pass}} "$AAB_PATH" {{key_alias}}
+        -keypass {{key_pass}} "$AAB_PATH" upload
 
     # Verify the signature
     jarsigner -verify -verbose -certs "$AAB_PATH"
