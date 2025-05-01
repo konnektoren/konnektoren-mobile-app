@@ -1,0 +1,79 @@
+name: konnektoren-app
+base: core24
+version: "0.1.6"
+title: Konnektoren App
+summary: Konnektoren is a language learning app for German learners.
+description: "Konnektoren is a language learning app for German learners. It is designed to help you learn German conjunction and other grammar topics."
+license: MIT
+website: https://konnektoren.help
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
+
+grade: stable
+confinement: strict
+
+layout:
+  /usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/webkit2gtk-4.1:
+    bind: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/webkit2gtk-4.1
+
+apps:
+  konnektoren-app:
+    command: usr/bin/konnektoren-app
+    desktop: usr/share/applications/konnektoren-app.desktop
+    extensions: [gnome]
+    plugs:
+      - network
+    # Add whatever plugs you need here, see https://snapcraft.io/docs/snapcraft-interfaces for more info.
+    # The gnome extension already includes [ desktop, desktop-legacy, gsettings, opengl, wayland, x11, mount-observe, calendar-service ]
+
+package-repositories:
+  - type: apt
+    components: [main]
+    suites: [noble]
+    key-id: 78E1918602959B9C59103100F1831DDAFC42E99D
+    url: http://ppa.launchpad.net/snappy-dev/snapcraft-daily/ubuntu
+
+parts:
+  just:
+    plugin: nil
+    build-packages:
+      - cargo
+    override-build: |
+      cargo install --root $SNAPCRAFT_PART_INSTALL/usr just
+
+  build-app:
+    plugin: dump
+    build-snaps:
+      - node/20/stable
+      - rustup/latest/stable
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - build-essential
+      - curl
+      - wget
+      - file
+      - libxdo-dev
+      - libssl-dev
+      - libayatana-appindicator3-dev
+      - librsvg2-dev
+      - dpkg
+      - just
+      - git
+    stage-packages:
+      - libwebkit2gtk-4.1-0
+      - libayatana-appindicator3-1
+    source: .
+    override-build: |
+      set -eu
+      rustup default stable
+      rustup target add wasm32-unknown-unknown
+      export PATH="$HOME/.cargo/bin:$PATH"
+      cargo install trunk
+      cargo install tauri-cli --force
+      export PATH="$PATH:$SNAPCRAFT_PART_INSTALL/usr/bin"
+      just setup-styles
+      cargo tauri build --bundles deb
+      dpkg -x target/release/bundle/deb/*.deb $SNAPCRAFT_PART_INSTALL/
+      sed -i -e "s|Icon=konnektoren-app|Icon=/usr/share/icons/hicolor/32x32/apps/konnektoren-app.png|g" $SNAPCRAFT_PART_INSTALL/usr/share/applications/konnektoren-app.desktop
