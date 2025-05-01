@@ -65,6 +65,24 @@ just format
 just test
 ```
 
+### Android App Signing
+
+Before publishing to the Play Store or distributing your Android app, you need to sign it:
+
+```bash
+# Create a keystore (only needed once)
+ANDROID_KEYSTORE_PASS=password ANDROID_KEY_PASS=password just android-create-keystore
+
+# Sign an APK file for direct distribution
+just android-sign-apk
+
+# Sign an AAB file for Play Store submission
+just android-sign-aab
+
+# Build and sign both formats in one command
+just android-release
+```
+
 ### Installation
 
 If you don't have `just` installed, you can install it using:
