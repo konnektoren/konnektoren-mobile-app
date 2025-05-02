@@ -1,8 +1,8 @@
 [package]
-name = "konnektoren-mobile-app"
+name = "konnektoren-app"
 version.workspace = true
 description.workspace = true
-authors = ["you"]
+authors = ["konnektoren.help"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
