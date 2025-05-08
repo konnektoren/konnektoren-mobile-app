@@ -1,3 +1,3 @@
-package help.konnektoren.mobile_app
+package help.konnektoren.app
 
 class MainActivity : TauriActivity()

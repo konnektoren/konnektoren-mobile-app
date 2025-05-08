@@ -4,3 +4,4 @@
 /temp
 android_keystore.jks
 upload_certificate.pem
+.DS_Store
