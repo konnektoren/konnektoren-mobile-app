@@ -192,6 +192,15 @@ update-styles:
 styles-status:
     cd {{styles}} && just vendor-status
 
+# Generate CHANGELOG.md with git-cliff
+changelog:
+    git cliff --offline --no-exec --output CHANGELOG.md
+
+# Bump patch by default, or choose minor, major, or an explicit X.Y.Z; syncs tauri.conf.json
+# and snapcraft.yaml, updates CHANGELOG.md, then commits and tags (no push)
+release VERSION="patch":
+    cargo release {{quote(VERSION)}} --workspace --execute --no-confirm
+
 # Format code
 format:
     cargo fmt

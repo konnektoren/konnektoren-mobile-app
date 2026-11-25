@@ -1,0 +1,43 @@
+[changelog]
+header = "# Changelog\n\n"
+body = """
+## {{ version | default(value="Unreleased") }}
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group }}
+
+{% for commit in commits -%}
+- {{ commit.message | upper_first }}
+{% endfor %}
+{%- endfor -%}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = false
+sort_commits = "newest"
+tag_pattern = '^konnektoren-mobile-app-v[0-9]+\.[0-9]+\.[0-9]+$'
+commit_preprocessors = [
+    { pattern = '^:sparkles:\s*', replace = 'feat: ' },
+    { pattern = '^:bento:\s*', replace = 'feat: ' },
+    { pattern = '^:tada:\s*', replace = 'feat: ' },
+    { pattern = '^:globe_with_meridians:\s*', replace = 'feat: ' },
+    { pattern = '^:bug:\s*', replace = 'fix: ' },
+    { pattern = '^:zap:\s*', replace = 'perf: ' },
+    { pattern = '^:lipstick:\s*', replace = 'style: ' },
+    { pattern = '^:recycle:\s*', replace = 'refactor: ' },
+    { pattern = '^:page_facing_up:\s*', replace = 'docs: ' },
+    { pattern = '^:white_check_mark:\s*', replace = 'test: ' },
+    { pattern = ':[a-z_]+:\s*', replace = '' },
+]
+commit_parsers = [
+    { message = '^chore\(release\)', skip = true },
+    { message = '^feat', group = 'Features' },
+    { message = '^fix', group = 'Bug fixes' },
+    { message = '^perf', group = 'Performance' },
+    { message = '^style', group = 'Improvements' },
+    { message = '^refactor', group = 'Maintenance' },
+    { message = '^docs', group = 'Documentation' },
+    { message = '^test', group = 'Tests' },
+    { message = '.*', group = 'Other changes' },
+]

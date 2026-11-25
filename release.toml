@@ -1,0 +1,5 @@
+publish = false
+push = false
+shared-version = true
+tag = false
+pre-release-commit-message = ":bookmark: chore(release): v{{version}}"

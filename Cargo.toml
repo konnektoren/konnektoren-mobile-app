@@ -4,6 +4,23 @@ version.workspace = true
 description.workspace = true
 edition = "2024"
 
+[workspace]
+resolver = "3"
+members = ["download-page", "src-tauri"]
+
+[workspace.package]
+version = "0.1.7"
+description = "Mobile App for Konnektoren"
+
+[package.metadata.release]
+tag = true
+tag-name = "konnektoren-mobile-app-v{{version}}"
+pre-release-hook = ["git", "cliff", "--offline", "--no-exec", "--tag", "konnektoren-mobile-app-v{{version}}", "--output", "CHANGELOG.md"]
+pre-release-replacements = [
+    { file = "src-tauri/tauri.conf.json", search = '"version": "[^"]+"', replace = '"version": "{{version}}"', exactly = 1 },
+    { file = "snapcraft.yaml", search = '(?m)^version: "[^"]+"', replace = 'version: "{{version}}"', exactly = 1 },
+]
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
 log = "0.4"
@@ -26,14 +43,6 @@ konnektoren-yew = { git = "https://github.com/konnektoren/konnektoren-yew.git", 
     "navigation",
 ] }
 yew_router = { git = "https://github.com/chriamue/yew-ssg", package = "yew-ssg-router" }
-
-[workspace]
-resolver = "2"
-members = ["download-page", "src-tauri"]
-
-[workspace.package]
-version = "0.1.7"
-description = "Mobile App for Konnektoren"
 
 [workspace.dependencies]
 yew = { version = "0.23", features = ["csr"] }
