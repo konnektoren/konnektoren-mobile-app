@@ -1,6 +1,5 @@
 /dist/
 /target/
-/Cargo.lock
 /temp
 android_keystore.jks
 upload_certificate.pem
