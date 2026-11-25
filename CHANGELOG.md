@@ -1,5 +1,16 @@
 # Changelog
 
+## konnektoren-mobile-app-v0.1.9
+
+### Bug fixes
+
+- Updates snapcraft and adds snap banner
+
+### Other changes
+
+- Updates download page
+- Updates tauri ci build
+- Updates ci android build
 ## konnektoren-mobile-app-v0.1.8
 
 ### Bug fixes
