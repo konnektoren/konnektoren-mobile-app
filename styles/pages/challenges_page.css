@@ -1,0 +1,28 @@
+.challenges-page {
+    @apply mx-auto flex w-full max-w-md flex-col gap-4 px-4 pt-4;
+}
+
+.challenges-page__title {
+    @apply m-0 text-2xl font-bold text-base-content;
+}
+
+.challenges-page__list {
+    @apply m-0 flex list-none flex-col gap-3 p-0;
+}
+
+.challenges-page__link {
+    @apply flex flex-col gap-1 rounded-lg border border-base-300 bg-base-100 p-4 no-underline shadow-sm transition-all duration-200;
+}
+
+.challenges-page__link:hover,
+.challenges-page__link:focus-visible {
+    @apply -translate-y-0.5 border-primary;
+}
+
+.challenges-page__name {
+    @apply font-semibold text-base-content;
+}
+
+.challenges-page__description {
+    @apply text-sm text-base-content/70;
+}

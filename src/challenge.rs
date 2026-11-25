@@ -15,7 +15,13 @@ pub fn challenge_comp(props: &ChallengeCompProps) -> Html {
     let challenge_result = use_state(|| Option::<ChallengeResult>::None);
     let challenge = game.create_challenge(&props.id).unwrap_or_default();
     let feedback_class = use_state(|| "".to_string());
-    let challenge_config = game.game_paths[0].get_challenge_config(&props.id).unwrap();
+    let Some(challenge_config) = game
+        .game_paths
+        .iter()
+        .find_map(|path| path.get_challenge_config(&props.id))
+    else {
+        return html! { <p class="challenge-page__missing">{ format!("Challenge not found: {}", props.id) }</p> };
+    };
 
     let handle_finish = {
         let challenge_result = challenge_result.clone();

@@ -23,7 +23,9 @@ konnektoren-yew = { git = "https://github.com/konnektoren/konnektoren-yew.git", 
     "storage",
     "effects",
     "music",
+    "navigation",
 ] }
+yew_router = { git = "https://github.com/chriamue/yew-ssg", package = "yew-ssg-router" }
 
 [workspace]
 resolver = "2"

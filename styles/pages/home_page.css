@@ -1,0 +1,47 @@
+.app {
+    @apply pb-24;
+}
+
+.home-page {
+    @apply mx-auto flex w-full max-w-md flex-col items-center gap-6 px-4 pt-4 text-center;
+}
+
+.home-page__hero {
+    @apply flex w-full flex-col items-center gap-4;
+}
+
+.home-page__mascot-link {
+    @apply flex max-w-[180px] flex-col items-center rounded-lg p-1 no-underline transition-all duration-200;
+}
+
+.home-page__mascot-link:hover {
+    @apply -translate-y-1 bg-primary/10;
+}
+
+.home-page__mascot-link .logo img {
+    @apply mx-auto w-full max-w-[160px] drop-shadow-md;
+}
+
+.home-page__eyebrow {
+    @apply m-0 text-sm font-semibold uppercase text-primary;
+}
+
+.home-page__title {
+    @apply m-0 text-2xl font-bold leading-tight text-base-content;
+}
+
+.home-page__actions {
+    @apply flex w-full flex-col items-stretch gap-3;
+}
+
+.home-page__primary-action {
+    @apply btn btn-primary min-h-12 gap-2 no-underline shadow-md;
+}
+
+.home-page__social {
+    @apply flex flex-col items-center gap-2;
+}
+
+.home-page__social-title {
+    @apply m-0 text-sm text-base-content/70;
+}
