@@ -1,61 +1,42 @@
-# Vendor paths
-vendor_dir := "vendors"
+vendors_root := "vendors"
+vendor_dir := "vendors/konnektoren_css"
 konnektoren_dir := "../temp/konnektoren"
 konnektoren_repo := "https://github.com/konnektoren/konnektoren-yew.git"
 
-# Default recipe to display help information
 default:
     @just --list
 
-# Setup vendors directory
-setup-vendors: clone-konnektoren integrate-konnektoren
+# Install shared styles if the vendor copy is missing
+setup-vendors:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -f "{{ vendor_dir }}/index.css" ]; then
+        just clone-konnektoren
+        just integrate-konnektoren
+    fi
 
-# Clone Konnektoren repository
 clone-konnektoren:
     #!/usr/bin/env bash
     set -euo pipefail
-    if [ ! -d "{{konnektoren_dir}}" ]; then
-        git clone {{konnektoren_repo}} {{konnektoren_dir}}
-
-    else
-        echo "Konnektoren already cloned"
+    if [ ! -d "{{ konnektoren_dir }}" ]; then
+        git clone --depth 1 "{{ konnektoren_repo }}" "{{ konnektoren_dir }}"
     fi
 
+# Copy upstream styles into the vendor dir and (re)write the vendor entrypoint
 integrate-konnektoren:
-    #!/usr/bin/env bash
-    set -euo pipefail
+    mkdir -p "{{ vendor_dir }}"
+    cp -R "{{ konnektoren_dir }}/styles/." "{{ vendor_dir }}/"
+    printf '%s\n' '@import "./konnektoren_css/index.css";' > "{{ vendors_root }}/index.css"
 
-    # Create vendors directory if it doesn't exist
-    mkdir -p {{vendor_dir}}/konnektoren_css
+# Fetch the latest upstream styles and replace the vendor copy
+update-vendors: clone-konnektoren
+    git -C "{{ konnektoren_dir }}" pull --ff-only
+    rm -rf "{{ vendor_dir }}"
+    just integrate-konnektoren
 
-    # Copy Konnektoren SCSS files
-    cp -r {{konnektoren_dir}}/styles/* {{vendor_dir}}/konnektoren_css/
-
-    # Update _index.scss to include konnektoren if not already included
-    if ! grep -q "@import 'konnektoren';" {{vendor_dir}}/index.css; then
-        echo "@import './konnektoren_css/index.css';" >> {{vendor_dir}}/index.css
-    fi
-
-    echo "Konnektoren integration complete"
-
-# Clean vendor dependencies
+# Remove the downloaded source and generated vendor copy
 clean-vendors:
-    rm -rf {{konnektoren_dir}}
-    rm -rf {{vendor_dir}}/konnektoren
+    rm -rf "{{ konnektoren_dir }}" "{{ vendor_dir }}" "{{ vendors_root }}/index.css"
 
-# Update vendor dependencies
-update-vendors: clean-vendors setup-vendors
-
-# Check vendor status
 vendor-status:
-    @echo "Checking vendor status..."
-    @if [ -d "{{konnektoren_dir}}" ]; then \
-        echo "Konnektoren: Installed"; \
-    else \
-        echo "Konnektoren: Not installed"; \
-    fi
-    @if [ -d "{{vendor_dir}}/konnektoren" ]; then \
-        echo "Konnektoren integration: Complete"; \
-    else \
-        echo "Konnektoren integration: Incomplete"; \
-    fi
+    @if [ -f "{{ vendor_dir }}/index.css" ]; then echo "Konnektoren CSS: Installed"; else echo "Konnektoren CSS: Not installed"; fi

@@ -188,6 +188,10 @@ update-rust:
 update-styles:
     cd {{styles}} && just update-vendors
 
+# Show shared style installation status
+styles-status:
+    cd {{styles}} && just vendor-status
+
 # Format code
 format:
     cargo fmt

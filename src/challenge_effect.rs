@@ -87,6 +87,9 @@ pub fn challenge_effect_component(props: &Props) -> Html {
                     ChallengeEvent::Completed => {
                         // Handle challenge completion if needed
                     }
+                    ChallengeEvent::Error(message) => {
+                        log::error!("Challenge error: {message}");
+                    }
                 }
             }
         })
