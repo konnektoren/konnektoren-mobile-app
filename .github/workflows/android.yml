@@ -17,20 +17,20 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install just
-        uses: extractions/setup-just@v3
+        uses: extractions/setup-just@v4
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: "zulu"
           java-version: "17"
 
       # The action's default also installs the obsolete "tools" package, which no longer exists.
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
           packages: platform-tools
 
@@ -61,7 +61,7 @@ jobs:
           NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/${{ env.NDK_VERSION }}
 
       - name: Upload APK and AAB
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-${{ github.sha }}
           path: |

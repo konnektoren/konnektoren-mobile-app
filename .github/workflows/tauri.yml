@@ -25,7 +25,7 @@ jobs:
             args: "--target aarch64-apple-darwin"
           - platform: "macos-latest" # for Intel based macs
             args: "--target x86_64-apple-darwin"
-          - platform: "ubuntu-22.04" # for Linux
+          - platform: "ubuntu-24.04" # for Linux
             args: ""
           - platform: "windows-latest" # for Windows
             args: ""
@@ -35,45 +35,35 @@ jobs:
     outputs:
       app_version: ${{ steps.get_app_version.outputs.version }}
       release_tag: ${{ steps.get_app_version.outputs.tag }}
-      release_created: ${{ steps.tauri_build.outputs.releaseCreated }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install just
-        uses: extractions/setup-just@v1
-        with:
-          just-version: "1.14"
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
+        uses: extractions/setup-just@v4
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ matrix.platform == 'macos-latest' && 'wasm32-unknown-unknown,aarch64-apple-darwin,x86_64-apple-darwin' || 'wasm32-unknown-unknown' }}
 
+      # Tauri 2 prerequisites for Debian/Ubuntu (https://v2.tauri.app/start/prerequisites/)
       - name: Install dependencies (Ubuntu only)
-        if: matrix.platform == 'ubuntu-22.04'
+        if: startsWith(matrix.platform, 'ubuntu-')
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-
-      - name: Install Tauri CLI
-        run: cargo install tauri-cli
-
-      - name: Add wasm target
-        run: rustup target add wasm32-unknown-unknown
-
-      - uses: cargo-bins/cargo-binstall@main
-
-      - name: Install Trunk
-        run: cargo binstall trunk -y
+          sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
+
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: Install Trunk and Tauri CLI
+        shell: bash
+        run: |
+          cargo binstall -y trunk
+          cargo binstall -y tauri-cli --version "^2"
 
       - name: Setup Dependencies
         run: just setup-styles
@@ -92,7 +82,7 @@ jobs:
       # Build the app with Tauri
       - name: Build with Tauri
         id: tauri_build
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -106,8 +96,8 @@ jobs:
 
       # Trigger the download page workflow only from one of the matrix jobs
       - name: Trigger download page workflow
-        if: ${{ matrix.platform == 'ubuntu-22.04' && (github.event_name != 'workflow_dispatch' || inputs.build_download_page) }}
-        uses: peter-evans/repository-dispatch@v2
+        if: ${{ startsWith(matrix.platform, 'ubuntu-') && (github.event_name != 'workflow_dispatch' || inputs.build_download_page) }}
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           event-type: release-published
