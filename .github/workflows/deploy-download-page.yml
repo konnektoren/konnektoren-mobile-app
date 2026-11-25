@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       release_tag:
-        description: "Release tag to use (e.g., konnektoren-mobile-app-v0.1.0)"
+        description: "Release tag to use (e.g., konnektoren-mobile-app-v0.1.0), or latest"
         required: true
         default: "latest"
 
@@ -14,49 +14,51 @@ jobs:
   build_and_deploy:
     name: Build and Deploy Download Page
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # read releases, push the gh-pages branch
     env:
       BUILD_DIR: ./dist
       GITHUB_REPO: https://github.com/${{ github.repository }}/releases
       RELEASE_TAG: ${{ github.event.client_payload.release_tag || inputs.release_tag }}
+      GH_TOKEN: ${{ github.token }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Install just
-        uses: extractions/setup-just@v1
+        uses: extractions/setup-just@v4
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
         with:
-          just-version: "1.14"
-
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          target: wasm32-unknown-unknown
-          profile: minimal
-          override: true
-
-      - uses: cargo-bins/cargo-binstall@main
-
-      - name: Install Trunk
-        run: cargo binstall trunk -y
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
+          targets: wasm32-unknown-unknown
 
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
 
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: Install Trunk
+        run: cargo binstall -y trunk
+
       - name: Setup Dependencies
         run: just setup-styles
+
+      - name: Resolve release tag
+        run: |
+          if [ "$RELEASE_TAG" = "latest" ]; then
+            RELEASE_TAG=$(gh release view --repo "${{ github.repository }}" --json tagName --jq .tagName)
+            echo "RELEASE_TAG=$RELEASE_TAG" >> "$GITHUB_ENV"
+          fi
+          echo "Using release $RELEASE_TAG"
 
       - name: Wait for release assets
         if: ${{ github.event.client_payload.release_tag != '' }}
         run: |
           echo "Waiting for release assets to be available..."
           # Wait up to 5 minutes for assets to be ready
-          for i in {1..60}; do
-            ASSETS_COUNT=$(curl -s https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.RELEASE_TAG }} | jq '.assets | length')
+          for i in $(seq 1 60); do
+            ASSETS_COUNT=$(gh release view "$RELEASE_TAG" --repo "${{ github.repository }}" --json assets --jq '.assets | length' 2>/dev/null || echo 0)
             if [ "$ASSETS_COUNT" -gt 0 ]; then
               echo "Found $ASSETS_COUNT assets, proceeding with build"
               break
@@ -72,34 +74,22 @@ jobs:
           mkdir -p ../$BUILD_DIR
           cp -r dist/* ../$BUILD_DIR/
 
-      - name: Setup CNAME
-        run: |
-          echo "${{ vars.DOWNLOAD_DOMAIN || 'download.konnektoren.app' }}" > $BUILD_DIR/CNAME
-
       - name: Setup custom 404 page
         run: |
           # Copy index.html to 404.html to handle client-side routing
           cp $BUILD_DIR/index.html $BUILD_DIR/404.html
 
       - name: Download release assets
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p $BUILD_DIR/assets
-          release_id=$(curl -s -H "Authorization: token $GH_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ env.RELEASE_TAG }} | jq .id)
-          assets=$(curl -s -H "Authorization: token $GH_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/$release_id/assets | jq -r '.[].name')
-          for asset in $assets; do
-            url="https://api.github.com/repos/${{ github.repository }}/releases/assets/$(curl -s -H "Authorization: token $GH_TOKEN" https://api.github.com/repos/${{ github.repository }}/releases/$release_id/assets | jq -r ".[] | select(.name==\"$asset\") | .id")"
-            echo "Downloading $asset..."
-            curl -L -H "Authorization: token $GH_TOKEN" -H "Accept: application/octet-stream" "$url" -o "$BUILD_DIR/assets/$asset"
-          done
+          gh release download "$RELEASE_TAG" --repo "${{ github.repository }}" --dir "$BUILD_DIR/assets" --clobber
+          ls -la "$BUILD_DIR/assets"
 
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           publish_branch: gh-pages
           publish_dir: ${{ env.BUILD_DIR }}
           force_orphan: true
+          cname: ${{ vars.DOWNLOAD_DOMAIN || 'download.konnektoren.app' }}
