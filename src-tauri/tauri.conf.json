@@ -6,7 +6,7 @@
   "build": {
     "beforeDevCommand": "trunk serve",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "trunk build",
+    "beforeBuildCommand": "trunk build --release",
     "frontendDist": "../dist"
   },
   "app": {
@@ -31,6 +31,9 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "category": "Education",
+    "shortDescription": "Learn German grammar with Konnektoren.",
+    "longDescription": "Konnektoren is a language learning app for German learners. Practise German connectors (Konnektoren), articles and other grammar topics with short, game-like challenges."
   }
 }

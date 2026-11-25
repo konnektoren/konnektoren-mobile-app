@@ -13,6 +13,8 @@ Assets are under `app-stores/assets/`. Screenshots capture a development build, 
 | `app-icon.png` | 512×512 icon |
 | `feature-graphic-1024x500.png` | 1024×500 feature graphic (Google Play) |
 | `feature-graphic-source.svg` | Editable graphic source (mascot embedded) |
+| `snap-banner-1920x640.png` | 1920×640 banner for the Snap Store (3:1, upload in the snapcraft.io dashboard) |
+| `snap-banner-source.svg` | Editable banner source |
 | `phone-screenshots/01-home.png` | Home: mascot, Start Learning, social links |
 | `phone-screenshots/02-challenges.png` | Challenge catalogue |
 | `phone-screenshots/03-question.png` | Konnektoren question with answer options |

@@ -44,7 +44,11 @@ apps:
 parts:
   konnektoren-app:
     plugin: dump
+    # Clone the repository instead of copying the folder: the working tree holds ~14 GB of local
+    # build output (target/, src-tauri/gen) that would otherwise be copied into the build VM.
+    # Builds therefore use committed files only, like `snapcraft remote-build`.
     source: .
+    source-type: git
     build-snaps:
       - rustup/latest/stable
     build-packages:
@@ -64,6 +68,10 @@ parts:
       - libayatana-appindicator3-1
     override-build: |
       set -eu
+      # The gnome extension points LD_LIBRARY_PATH at the GNOME SDK, whose libc does not match
+      # the loader of the rustup snap (or the build scripts cargo runs): "undefined symbol
+      # __nptl_change_stack_perm". Building only needs the SDK via PKG_CONFIG_PATH, so drop it.
+      unset LD_LIBRARY_PATH
       rustup default stable
       rustup target add wasm32-unknown-unknown
       export PATH="$HOME/.cargo/bin:$PATH"

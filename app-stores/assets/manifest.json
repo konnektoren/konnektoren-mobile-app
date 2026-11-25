@@ -89,6 +89,13 @@
       "height": 1440,
       "bytes": 105444,
       "sha256": "059183240e72e54caae839aa0feb00fcd7ba45b9f850c390086675d29365d1b1"
+    },
+    {
+      "file": "assets/snap-banner-1920x640.png",
+      "width": 1920,
+      "height": 640,
+      "bytes": 172093,
+      "sha256": "fae6f39af35b10c5de02c8422db4fa7969f8aae1a65fa704964397d443b9fb87"
     }
   ],
   "tablet_capture": {

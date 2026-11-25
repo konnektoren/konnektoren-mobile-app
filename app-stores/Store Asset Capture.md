@@ -58,6 +58,13 @@ rsvg-convert app-stores/assets/feature-graphic-source.svg -o /tmp/mobile-feature
 magick /tmp/mobile-feature.png PNG24:app-stores/assets/feature-graphic-1024x500.png
 ```
 
+Re-export the Snap Store banner (must be 3:1):
+
+```sh
+rsvg-convert app-stores/assets/snap-banner-source.svg -o /tmp/snap-banner.png
+magick /tmp/snap-banner.png PNG24:app-stores/assets/snap-banner-1920x640.png
+```
+
 Refresh dimensions, checksums and capture metadata in `assets/manifest.json` after changes.
 
 Related: [[Store Assets]]

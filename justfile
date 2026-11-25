@@ -45,8 +45,9 @@ build:
 snap-check:
     snapcraft expand-extensions > /dev/null && echo "snapcraft.yaml is valid"
 
-# Build the snap for the host architecture (in Multipass on macOS; slow)
+# Build the snap for the host architecture (in Multipass on macOS; slow). Builds committed files only.
 snap:
+    @git diff --quiet HEAD -- || echo "warning: uncommitted changes are not included in the snap build"
     snapcraft pack
 
 # Build Android application for production

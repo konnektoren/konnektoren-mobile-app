@@ -2,9 +2,16 @@
 
 Registered on 21. September 2024.
 
-Summary: Konnektoren is a language learning app for German grammar.
+Summary: Learn German grammar with Konnektoren.
 
-Description: Konnektoren is a language learning app for German grammar. It uses gamification to make learning fun and engaging. The app is designed to help users learn German grammar by connecting words and phrases in a fun and interactive way.
+Description: Konnektoren is a language learning app for German learners. Practise German connectors (Konnektoren), articles and other grammar topics with short, game-like challenges.
+
+Features:
+
+- Multiple-choice grammar challenges with instant feedback and sounds
+- Example sentences as help for every question
+- Results with score and time taken
+- Progress is stored locally on your device
 
 ## Build
 
@@ -25,6 +32,12 @@ snapcraft login
 snapcraft upload konnektoren-app_<version>_amd64.snap --release=edge
 snapcraft upload konnektoren-app_<version>_arm64.snap --release=edge
 ```
+
+## Store listing
+
+Upload in the snapcraft.io dashboard (Listing): the banner `assets/snap-banner-1920x640.png`
+(3:1; the Play feature graphic `feature-graphic-1024x500.png` is rejected) and the
+tablet screenshots from `assets/tablet-screenshots/`.
 
 ## Install
 
