@@ -1,0 +1,42 @@
+/* Mirrors the web game's challenge page (template-page-full + title card). */
+.challenge-page {
+    @apply flex w-full flex-col bg-base-100;
+}
+
+.challenge-page__header {
+    @apply sticky top-0 z-20 flex items-center gap-3 px-4 py-3;
+    @apply border-b border-base-300 bg-base-100/95 backdrop-blur;
+    padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+
+.challenge-page__back {
+    @apply btn btn-ghost btn-sm btn-circle shrink-0 no-underline text-primary;
+}
+
+.challenge-page__back span {
+    @apply sr-only;
+}
+
+.challenge-page__title {
+    @apply m-0 flex min-w-0 flex-col gap-0.5 border-l-4 border-primary pl-3;
+}
+
+.challenge-page__level {
+    @apply truncate text-xs font-semibold text-primary;
+}
+
+.challenge-page__name {
+    @apply truncate text-sm font-bold leading-tight text-base-content;
+}
+
+.challenge-page__content {
+    @apply mx-auto w-full max-w-6xl p-4 sm:p-6;
+}
+
+.challenge-page__result {
+    @apply mb-6;
+}
+
+.challenge-page__missing {
+    @apply p-6 text-center text-base-content/70;
+}
