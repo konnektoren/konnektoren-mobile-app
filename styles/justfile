@@ -1,4 +1,3 @@
-vendors_root := "vendors"
 vendor_dir := "vendors/konnektoren_css"
 konnektoren_dir := "../temp/konnektoren"
 konnektoren_repo := "https://github.com/konnektoren/konnektoren-yew.git"
@@ -22,11 +21,9 @@ clone-konnektoren:
         git clone --depth 1 "{{ konnektoren_repo }}" "{{ konnektoren_dir }}"
     fi
 
-# Copy upstream styles into the vendor dir and (re)write the vendor entrypoint
 integrate-konnektoren:
     mkdir -p "{{ vendor_dir }}"
     cp -R "{{ konnektoren_dir }}/styles/." "{{ vendor_dir }}/"
-    printf '%s\n' '@import "./konnektoren_css/index.css";' > "{{ vendors_root }}/index.css"
 
 # Fetch the latest upstream styles and replace the vendor copy
 update-vendors: clone-konnektoren
@@ -36,7 +33,7 @@ update-vendors: clone-konnektoren
 
 # Remove the downloaded source and generated vendor copy
 clean-vendors:
-    rm -rf "{{ konnektoren_dir }}" "{{ vendor_dir }}" "{{ vendors_root }}/index.css"
+    rm -rf "{{ konnektoren_dir }}" "{{ vendor_dir }}"
 
 vendor-status:
     @if [ -f "{{ vendor_dir }}/index.css" ]; then echo "Konnektoren CSS: Installed"; else echo "Konnektoren CSS: Not installed"; fi

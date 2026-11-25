@@ -2,7 +2,7 @@
 target = "./index.html"
 
 [watch]
-ignore = ["./src-tauri"]
+ignore = ["./src-tauri", "./temp"]
 
 [serve]
 port = 1420
@@ -10,3 +10,9 @@ open = false
 
 [tools]
 tailwindcss = "2.1.9"
+
+# Install the shared Konnektoren styles on a fresh checkout (no-op once installed).
+[[hooks]]
+stage = "pre_build"
+command = "just"
+command_arguments = ["setup-styles"]
