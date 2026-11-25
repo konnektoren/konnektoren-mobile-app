@@ -1,7 +1,7 @@
 name: konnektoren-app
 base: core24
 # Kept in sync with Cargo.toml by `just release` (see [package.metadata.release]).
-version: "0.1.7"
+version: "0.1.8"
 title: Konnektoren App
 summary: Learn German grammar with Konnektoren.
 description: |

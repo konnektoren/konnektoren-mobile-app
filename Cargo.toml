@@ -9,7 +9,7 @@ resolver = "3"
 members = ["download-page", "src-tauri"]
 
 [workspace.package]
-version = "0.1.7"
+version = "0.1.8"
 description = "Mobile App for Konnektoren"
 
 [package.metadata.release]
