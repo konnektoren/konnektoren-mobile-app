@@ -1,0 +1,12 @@
+/* The shared bottom bar hides itself from md up (the web game shows a desktop toolbar there).
+   The app has no toolbar, so keep the bottom bar on tablets and landscape screens too. */
+@media (width >= 48rem) {
+    .navigation-bar--bottom {
+        display: flex;
+    }
+
+    /* Keep tabs a comfortable width on wide screens instead of stretching edge to edge. */
+    .navigation-bar--bottom .navigation-bar__primary {
+        @apply mx-auto max-w-3xl;
+    }
+}
