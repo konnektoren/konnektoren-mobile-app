@@ -1,0 +1,107 @@
+{
+  "captured": "2026-11-25",
+  "status": "draft-development-build",
+  "package": "help.konnektoren.app",
+  "tauri_identifier": "help.konnektoren.app",
+  "installed_version_name": "0.1.7",
+  "installed_version_code": 1007,
+  "debuggable": true,
+  "android_version": "15",
+  "api_level": 35,
+  "webview": "com.google.android.webview 157.0.8103.38",
+  "device": "sdk_gphone64_arm64 / emulator-5554 (Medium_Phone_API_35)",
+  "capture_resolution": "1080x1920",
+  "capture_density_dpi": 320,
+  "original_resolution": "1080x2400",
+  "original_density_dpi": 420,
+  "display_restored": true,
+  "status_bar": "Android System UI demo mode (09:00, full battery, no notifications)",
+  "ui_language": "English",
+  "build_note": "Built with local konnektoren-yew fixes (speech synthesis guard, wrapping answer buttons, timer cleanup) patched in; not yet in the released konnektoren-yew",
+  "screenshot_edits": "Direct adb capture; lossless RGB PNG conversion removes fully opaque alpha only; no retouching, cropping or compositing",
+  "assets": [
+    {
+      "file": "assets/app-icon.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 105925,
+      "sha256": "c80016543be146d94ee883555381059379b91cfa352131d4c86b6f5718ada9f7"
+    },
+    {
+      "file": "assets/feature-graphic-1024x500.png",
+      "width": 1024,
+      "height": 500,
+      "bytes": 107181,
+      "sha256": "95910ec10f2991805b518dd5f40a65623b6e87c449317eb586b0ad1354deed22"
+    },
+    {
+      "file": "assets/phone-screenshots/01-home.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 73185,
+      "sha256": "e138f08799489c05ec4b358968b085dea92bee31095a289797d60a0fe3cccbcc"
+    },
+    {
+      "file": "assets/phone-screenshots/02-challenges.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 78351,
+      "sha256": "236be3dcd4f717dbd2b54bade3ac0412f7aca8ad53d59ba3a2a231382c359de1"
+    },
+    {
+      "file": "assets/phone-screenshots/03-question.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 124179,
+      "sha256": "204b69081b24234117aa1c2b77ee7040ad40e80149a7f4794381125b49abbc7f"
+    },
+    {
+      "file": "assets/phone-screenshots/04-result.png",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 110819,
+      "sha256": "9133e376b84b40c059e3c473e0748270de0b8fdd40c53629c08918ae87912ce4"
+    },
+    {
+      "file": "assets/tablet-screenshots/01-home.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 80442,
+      "sha256": "8ee43e5edf3b641aae756e36b071105fd486e3cde50de2e272f093735d025ebe"
+    },
+    {
+      "file": "assets/tablet-screenshots/02-challenges.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 124664,
+      "sha256": "4866f1581e49dbcd83e780d3d7542b46fe38f29b58632ab328c4f0463564a34d"
+    },
+    {
+      "file": "assets/tablet-screenshots/03-question.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 116215,
+      "sha256": "7bf2dd26b3f8d15630700f4937e45dd16bdd18b15609d02bd33bd07221d8596b"
+    },
+    {
+      "file": "assets/tablet-screenshots/04-result.png",
+      "width": 2560,
+      "height": 1440,
+      "bytes": 105444,
+      "sha256": "059183240e72e54caae839aa0feb00fcd7ba45b9f850c390086675d29365d1b1"
+    }
+  ],
+  "tablet_capture": {
+    "captured": "2026-11-25",
+    "device": "Pixel Tablet / emulator-5554 (Pixel_Tablet AVD, cold boot)",
+    "android_version": "15",
+    "api_level": 35,
+    "webview": "com.google.android.webview 124.0.6367.219",
+    "orientation": "landscape (rotation locked)",
+    "capture_resolution": "2560x1440",
+    "capture_density_dpi": 320,
+    "original_resolution": "2560x1600",
+    "display_restored": true,
+    "build_note": "Same local konnektoren-yew fixes as the phone set, plus the app's tablet navigation fix (styles/components/navigation.css)"
+  }
+}
