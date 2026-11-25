@@ -6,28 +6,21 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  # Same NDK as local builds; compileSdk/targetSdk 36 (src-tauri/gen/android/app/build.gradle.kts).
+  NDK_VERSION: "28.0.13004108"
+
 jobs:
   build-android:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install just
-        uses: extractions/setup-just@v1
-        with:
-          just-version: "1.14"
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 8
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
+        uses: extractions/setup-just@v3
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -35,32 +28,43 @@ jobs:
           distribution: "zulu"
           java-version: "17"
 
+      # The action's default also installs the obsolete "tools" package, which no longer exists.
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
 
-      - name: Install NDK
-        run: sdkmanager "ndk;27.0.11902837"
+      - name: Install Android platform, build tools and NDK
+        run: sdkmanager "platforms;android-36" "build-tools;36.0.0" "ndk;${{ env.NDK_VERSION }}"
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android,wasm32-unknown-unknown
 
-      - uses: cargo-bins/cargo-binstall@main
-
-      - name: Install Trunk
-        run: cargo binstall trunk -y
-
-      - name: Install Tauri
-        run: cargo binstall create-tauri-app -y
-
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
 
-      - name: Setup Dependencies
+      - uses: cargo-bins/cargo-binstall@main
+
+      - name: Install Trunk and Tauri CLI
+        run: |
+          cargo binstall -y trunk
+          cargo binstall -y tauri-cli --version "^2"
+
+      - name: Setup styles
         run: just setup-styles
 
       - name: Build app bundle
         run: just android-build
         env:
-          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/27.0.11902837
+          NDK_HOME: ${{ env.ANDROID_HOME }}/ndk/${{ env.NDK_VERSION }}
+
+      - name: Upload APK and AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-${{ github.sha }}
+          path: |
+            src-tauri/gen/android/app/build/outputs/apk/**/*.apk
+            src-tauri/gen/android/app/build/outputs/bundle/**/*.aab
+          if-no-files-found: error
