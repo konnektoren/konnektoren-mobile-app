@@ -41,6 +41,14 @@ ios-dev:
 build:
     cargo tauri build
 
+# Check snapcraft.yaml without building (fast)
+snap-check:
+    snapcraft expand-extensions > /dev/null && echo "snapcraft.yaml is valid"
+
+# Build the snap for the host architecture (in Multipass on macOS; slow)
+snap:
+    snapcraft pack
+
 # Build Android application for production
 android-build:
     cargo tauri android build
